@@ -17,7 +17,7 @@ Route::get('/galeri', [PublicPageController::class, 'gallery'])->name('gallery')
 Route::get('/kontak', [PublicPageController::class, 'contact'])->name('contact');
 Route::post('/kontak', [PublicPageController::class, 'submitContact'])->name('contact.submit');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/user/dashboard', [DashboardController::class, 'user'])
