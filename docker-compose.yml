@@ -9,9 +9,10 @@ services:
     volumes:
       - ./:/var/www
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     entrypoint: ["/var/www/docker-entrypoint.sh"]
   mysql:
     image: mysql:8.0
@@ -26,16 +27,23 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: web-kelas-phpmyadmin
     restart: unless-stopped
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
     ports:
-      - "8080:80"
+      - "8082:80"
 volumes:
   mysql_data:

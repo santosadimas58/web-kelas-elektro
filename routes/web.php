@@ -30,6 +30,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
+    Route::post('/galeri/upload', [PublicPageController::class, 'uploadGallery'])
+        ->middleware('role:user')
+        ->name('gallery.upload');
+
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
         Route::get('/settings', [SiteSettingController::class, 'edit'])->name('settings.edit');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GalleryItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class GalleryItemController extends Controller
@@ -72,6 +73,10 @@ class GalleryItemController extends Controller
      */
     public function destroy(GalleryItem $gallery): RedirectResponse
     {
+        if ($gallery->image_path) {
+            Storage::disk('public')->delete($gallery->image_path);
+        }
+
         $gallery->delete();
 
         return redirect()

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Logo Kelas Elektronika Industri</title>
+  <desc id="logoDesc">Roda gigi biru tua dengan simbol colokan listrik dan kilat biru muda.</desc>
+  <g fill="#0F2F63">
+    <rect x="118" y="8" width="20" height="34" rx="6"/>
+    <rect x="118" y="214" width="20" height="34" rx="6"/>
+    <rect x="8" y="118" width="34" height="20" rx="6"/>
+    <rect x="214" y="118" width="34" height="20" rx="6"/>
+    <rect x="118" y="8" width="20" height="34" rx="6" transform="rotate(45 128 128)"/>
+    <rect x="118" y="214" width="20" height="34" rx="6" transform="rotate(45 128 128)"/>
+    <rect x="8" y="118" width="34" height="20" rx="6" transform="rotate(45 128 128)"/>
+    <rect x="214" y="118" width="34" height="20" rx="6" transform="rotate(45 128 128)"/>
+    <circle cx="128" cy="128" r="88"/>
+  </g>
+  <circle cx="128" cy="128" r="64" fill="#FFFFFF"/>
+  <g fill="#0F2F63">
+    <rect x="55" y="123" width="36" height="10" rx="5"/>
+    <rect x="123" y="64" width="10" height="128" rx="5"/>
+    <path d="M95 88a6 6 0 0 1 9.2-5.1l48 32a6 6 0 0 1 0 10l-48 32A6 6 0 0 1 95 152Z"/>
+  </g>
+  <path fill="#67A9E4" d="M204 28l-42 56h38l-46 72 10-52h-34z"/>
+</svg>

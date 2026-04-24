@@ -4,9 +4,11 @@
             <div class="flex">
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-yellow-400 text-sm font-bold text-slate-950">
-                            EI
-                        </span>
+                        <img
+                            src="{{ asset('images/logo-elektro.svg') }}"
+                            alt="Logo Kelas Elektronika Industri"
+                            class="h-10 w-10 object-contain"
+                        >
                         <div>
                             <p class="font-display text-base font-bold text-slate-950">Panel Kelas Elektronika Industri</p>
                             <p class="text-xs text-slate-500">{{ ucfirst(Auth::user()->role) }}</p>
@@ -36,6 +38,13 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center rounded-full border border-slate-200 bg-slate-950 px-4 py-2 text-sm leading-4 font-medium text-white hover:bg-slate-800 focus:outline-none transition ease-in-out duration-150">
+                            @if (Auth::user()->profile_photo_url)
+                                <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" class="me-3 h-8 w-8 rounded-full object-cover ring-1 ring-white/20">
+                            @else
+                                <span class="me-3 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400 text-xs font-bold text-slate-950">
+                                    {{ Auth::user()->initials }}
+                                </span>
+                            @endif
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
@@ -98,8 +107,19 @@
 
         <div class="pt-4 pb-1 border-t border-slate-200">
             <div class="px-4">
-                <div class="font-medium text-base text-slate-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-slate-500">{{ Auth::user()->email }}</div>
+                <div class="flex items-center gap-3">
+                    @if (Auth::user()->profile_photo_url)
+                        <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" class="h-11 w-11 rounded-2xl object-cover ring-1 ring-slate-200">
+                    @else
+                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-sm font-bold text-yellow-300">
+                            {{ Auth::user()->initials }}
+                        </div>
+                    @endif
+                    <div>
+                        <div class="font-medium text-base text-slate-800">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm text-slate-500">{{ Auth::user()->email }}</div>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-3 space-y-1">

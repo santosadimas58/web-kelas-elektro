@@ -25,9 +25,11 @@
             <div>
                 <a href="/">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-500/20">
-                            EI
-                        </span>
+                        <img
+                            src="{{ asset('images/logo-elektro.svg') }}"
+                            alt="Logo Kelas Elektronika Industri"
+                            class="h-14 w-14 object-contain"
+                        >
                         <div>
                             <p class="font-display text-lg font-bold text-slate-950 dark:text-slate-100">Kelas Elektronika Industri</p>
                             <p class="text-sm text-slate-500 dark:text-slate-400">Pendidikan Teknik Elektro</p>

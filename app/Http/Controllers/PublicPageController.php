@@ -6,6 +6,7 @@ use App\Models\ContactMessage;
 use App\Models\GalleryItem;
 use App\Models\SiteSetting;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -43,7 +44,10 @@ class PublicPageController extends Controller
     {
         return view('pages.students', [
             'title' => 'Mahasiswa',
-            'students' => Student::query()->orderBy('sort_order')->orderBy('name')->get(),
+            'students' => User::query()
+                ->where('role', 'user')
+                ->orderBy('name')
+                ->get(),
             'siteSetting' => SiteSetting::current(),
         ]);
     }
@@ -55,9 +59,39 @@ class PublicPageController extends Controller
     {
         return view('pages.gallery', [
             'title' => 'Galeri',
-            'gallery' => GalleryItem::query()->orderBy('sort_order')->latest()->get(),
+            'gallery' => GalleryItem::query()
+                ->with('user:id,name')
+                ->orderBy('sort_order')
+                ->latest()
+                ->get(),
             'siteSetting' => SiteSetting::current(),
         ]);
+    }
+
+    /**
+     * Store a gallery upload from a regular user.
+     */
+    public function uploadGallery(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:1000'],
+            'image' => ['required', 'image', 'max:4096'],
+        ]);
+
+        $imagePath = $request->file('image')->store('gallery-images', 'public');
+
+        GalleryItem::query()->create([
+            'user_id' => $request->user()->id,
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'image_path' => $imagePath,
+            'sort_order' => 0,
+        ]);
+
+        return redirect()
+            ->route('gallery')
+            ->with('status', 'Foto galeri berhasil diunggah.');
     }
 
     /**

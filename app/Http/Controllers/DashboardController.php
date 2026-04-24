@@ -47,7 +47,7 @@ class DashboardController extends Controller
         return view('dashboard.user', [
             'title' => 'Dashboard User',
             'user' => $request->user(),
-            'studentsCount' => Student::query()->count(),
+            'studentsCount' => User::query()->where('role', 'user')->count(),
             'galleryCount' => GalleryItem::query()->count(),
         ]);
     }

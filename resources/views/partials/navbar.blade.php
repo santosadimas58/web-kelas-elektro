@@ -11,9 +11,11 @@
 <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl dark:border-slate-200 dark:bg-white/95">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="flex items-center gap-3">
-            <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-yellow-400 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-500/20">
-                EI
-            </span>
+            <img
+                src="{{ asset('images/logo-elektro.svg') }}"
+                alt="Logo Kelas Elektronika Industri"
+                class="h-11 w-11 object-contain"
+            >
             <span>
                 <span class="block font-display text-base font-bold tracking-wide text-slate-950">{{ $sharedSiteSetting->site_name ?? 'Kelas Elektronika Industri' }}</span>
                 <span class="block text-xs text-slate-500">{{ $sharedSiteSetting->department ?? 'Pendidikan Teknik Elektro' }}</span>

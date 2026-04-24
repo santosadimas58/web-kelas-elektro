@@ -20,15 +20,15 @@
                 <h2 class="mt-2 font-display text-2xl font-bold text-slate-950 dark:text-slate-100">{{ $students->count() }} Orang</h2>
             </div>
             <p class="max-w-xl text-sm leading-7 text-slate-600 dark:text-slate-300">
-                Struktur data terpusat sehingga nama, bio, dan foto placeholder bisa diganti dari satu sumber dengan cepat.
+                Halaman ini sekarang otomatis menampilkan akun user yang terdaftar, sehingga jumlah kartu selalu mengikuti total akun user aktif.
             </p>
         </div>
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @foreach ($students as $student)
                 <article class="student-card">
-                    @if ($student->photo_url)
-                        <img src="{{ $student->photo_url }}" alt="{{ $student->name }}" class="h-52 w-full rounded-[1.75rem] object-cover ring-1 ring-slate-200 dark:ring-slate-700">
+                    @if ($student->profile_photo_url)
+                        <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-52 w-full rounded-[1.75rem] object-cover ring-1 ring-slate-200 dark:ring-slate-700">
                     @else
                         <div class="student-photo">
                             <span class="student-avatar-large">{{ $student->initials }}</span>
@@ -36,10 +36,10 @@
                     @endif
                     <div class="mt-6">
                         <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">{{ $student->name }}</h2>
-                        @if ($student->study_focus)
-                            <p class="mt-2 text-sm font-medium text-blue-700 dark:text-blue-300">{{ $student->study_focus }}</p>
-                        @endif
-                        <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ $student->bio }}</p>
+                        <p class="mt-2 text-sm font-medium text-blue-700 dark:text-blue-300">User Kelas</p>
+                        <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                            Akun ini terdaftar pada sistem website kelas dan dapat mengelola profilnya sendiri melalui dashboard pengguna.
+                        </p>
                     </div>
                 </article>
             @endforeach
