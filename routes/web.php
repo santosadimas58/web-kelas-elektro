@@ -17,7 +17,7 @@ Route::get('/galeri', [PublicPageController::class, 'gallery'])->name('gallery')
 Route::get('/kontak', [PublicPageController::class, 'contact'])->name('contact');
 Route::post('/kontak', [PublicPageController::class, 'submitContact'])->name('contact.submit');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'active-user'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/user/dashboard', [DashboardController::class, 'user'])
@@ -31,14 +31,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::post('/galeri/upload', [PublicPageController::class, 'uploadGallery'])
-        ->middleware('role:user')
+        ->middleware(['role:user', 'can:upload-gallery'])
         ->name('gallery.upload');
 
-    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['role:admin', 'can:access-admin-panel'])->group(function () {
+        Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
         Route::get('/settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [SiteSettingController::class, 'update'])->name('settings.update');
-        Route::resource('/students', StudentController::class)->except(['show']);
+        Route::resource('/students', StudentController::class);
         Route::resource('/gallery', GalleryItemController::class)->except(['show']);
         Route::resource('/users', UserController::class)->except(['show']);
         Route::get('/messages', [ContactMessageController::class, 'index'])->name('messages.index');

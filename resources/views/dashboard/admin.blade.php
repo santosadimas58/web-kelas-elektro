@@ -17,7 +17,7 @@
                 <div class="feature-card">
                     <p class="text-sm text-slate-500 dark:text-slate-400">Galeri</p>
                     <p class="mt-2 text-3xl font-bold text-slate-950 dark:text-slate-100">{{ $galleryCount }}</p>
-                    <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">Jumlah item galeri placeholder yang saat ini dipublikasikan.</p>
+                    <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">Jumlah item galeri yang saat ini ditampilkan pada website publik.</p>
                 </div>
                 <div class="feature-card">
                     <p class="text-sm text-slate-500 dark:text-slate-400">Akun</p>
@@ -59,7 +59,7 @@
                         <a href="{{ route('admin.messages.index') }}" class="admin-action">Pesan Kontak</a>
                     </div>
                     <p class="mt-5 text-sm leading-7 text-slate-600 dark:text-slate-300">
-                        Admin demo saat ini menggunakan email <strong class="text-slate-950 dark:text-slate-100">admin@example.com</strong> dan password <strong class="text-slate-950 dark:text-slate-100">password</strong>.
+                        Kelola akun admin dan user secara terpusat, lalu pantau setiap pesan yang masuk dari halaman kontak publik.
                     </p>
                 </section>
             </div>

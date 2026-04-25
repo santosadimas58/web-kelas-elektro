@@ -35,11 +35,13 @@
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('admin.users.edit', $user) }}" class="admin-action">Edit</a>
-                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="admin-danger" onclick="return confirm('Hapus akun ini?')" type="submit">Hapus</button>
-                                    </form>
+                                    @if (auth()->id() !== $user->id)
+                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="admin-danger" onclick="return confirm('Hapus akun ini?')" type="submit">Hapus</button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

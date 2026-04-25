@@ -30,6 +30,7 @@ class ProfileUpdateRequest extends FormRequest
             'profile_photo' => [
                 'nullable',
                 File::image()
+                    ->types(['jpg', 'jpeg', 'png', 'webp'])
                     ->max(2048),
             ],
         ];

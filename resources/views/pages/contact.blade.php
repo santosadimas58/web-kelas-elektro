@@ -8,7 +8,7 @@
                 Hubungi dan kenali identitas kelas
             </h1>
             <p class="mt-6 text-lg leading-8 text-slate-300">
-                Form kontak ini masih sederhana dan belum terhubung ke sistem admin, sesuai fokus tahap awal website publik.
+                Form kontak ini terhubung ke panel admin sehingga pesan yang masuk bisa langsung dipantau dari dashboard.
             </p>
         </div>
     </section>
@@ -23,11 +23,9 @@
                     </h2>
                 </div>
 
-                @if (session('status'))
-                    <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                        {{ session('status') }}
-                    </div>
-                @endif
+                <div class="mt-6">
+                    @include('partials.flash')
+                </div>
 
                 <form action="{{ route('contact.submit') }}" method="POST" class="mt-8 space-y-6">
                     @csrf

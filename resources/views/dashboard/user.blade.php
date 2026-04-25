@@ -45,6 +45,7 @@
                 </div>
                 <div class="mt-6 flex flex-wrap gap-3">
                     <a href="{{ route('home') }}" class="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-900">Kembali ke Website</a>
+                    <a href="{{ route('gallery') }}" class="inline-flex rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800">Buka Galeri</a>
                     <a href="{{ route('profile.edit') }}" class="inline-flex rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800">Edit Profil</a>
                 </div>
             </section>
@@ -54,7 +55,7 @@
                 <h3 class="mt-4 font-display text-2xl font-bold text-slate-950 dark:text-slate-100">Ringkasan website kelas</h3>
                 <div class="mt-6 space-y-4 text-sm leading-7 text-slate-600 dark:text-slate-300">
                     <p>Website publik saat ini menampilkan {{ $studentsCount }} profil mahasiswa dan {{ $galleryCount }} item galeri.</p>
-                    <p>User biasa dapat melihat website, mengelola profil akun sendiri, dan menggunakan akses login sesuai kebutuhan pengguna umum.</p>
+                    <p>User biasa dapat melihat website, mengelola profil akun sendiri, dan mengunggah foto galeri tanpa akses ke manajemen data admin.</p>
                 </div>
             </section>
         </div>

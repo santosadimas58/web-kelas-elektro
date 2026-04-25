@@ -4,11 +4,12 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
-        <title>{{ $title ?? config('classroom.site_name') }} | {{ config('classroom.department') }}</title>
+        <title>{{ $title ?? ($sharedSiteSetting->site_name ?? config('classroom.site_name')) }} | {{ $sharedSiteSetting->department ?? config('classroom.department') }}</title>
         <meta
             name="description"
-            content="Website dokumentasi kelas Elektronika Industri - Pendidikan Teknik Elektro."
+            content="{{ $sharedSiteSetting->tagline ?? 'Website dokumentasi kelas Elektronika Industri - Pendidikan Teknik Elektro.' }}"
         >
 
         @include('layouts.partials.theme-head')

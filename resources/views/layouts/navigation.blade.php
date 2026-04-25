@@ -20,9 +20,25 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @if (Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
+                            {{ __('Mahasiswa') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.gallery.index')" :active="request()->routeIs('admin.gallery.*')">
+                            {{ __('Galeri') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Akun') }}
+                        </x-nav-link>
+                    @endif
                     <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                         {{ __('Profile') }}
                     </x-nav-link>
+                    @if (! Auth::user()->isAdmin())
+                        <x-nav-link :href="route('gallery')" :active="request()->routeIs('gallery')">
+                            {{ __('Galeri Kelas') }}
+                        </x-nav-link>
+                    @endif
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         {{ __('Website') }}
                     </x-nav-link>
@@ -97,9 +113,25 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @if (Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
+                    {{ __('Mahasiswa') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.gallery.index')" :active="request()->routeIs('admin.gallery.*')">
+                    {{ __('Galeri') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Akun') }}
+                </x-responsive-nav-link>
+            @endif
             <x-responsive-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                 {{ __('Profile') }}
             </x-responsive-nav-link>
+            @if (! Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('gallery')" :active="request()->routeIs('gallery')">
+                    {{ __('Galeri Kelas') }}
+                </x-responsive-nav-link>
+            @endif
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
                 {{ __('Website') }}
             </x-responsive-nav-link>

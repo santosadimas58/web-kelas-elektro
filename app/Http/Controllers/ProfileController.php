@@ -40,10 +40,6 @@ class ProfileController extends Controller
             }
         }
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -61,10 +57,6 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
-
-        if ($user->profile_photo_path) {
-            Storage::disk('public')->delete($user->profile_photo_path);
-        }
 
         $user->delete();
 

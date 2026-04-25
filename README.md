@@ -1,58 +1,296 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kelas Elektronika Industri
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Website dokumentasi kelas berbasis Laravel untuk menampilkan profil mahasiswa, galeri kelas, halaman publik, dashboard user, dan admin panel pengelolaan konten.
 
-## About Laravel
+## Ringkasan
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Project ini dirancang agar:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- siap dipakai untuk demo kelas
+- mudah dipindahkan ke server lain
+- punya seed data awal
+- punya role admin dan user
+- punya halaman publik yang bisa dikelola dari dashboard
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Fitur
 
-## Learning Laravel
+- Halaman publik:
+  - Beranda
+  - Tentang
+  - Mahasiswa
+  - Galeri
+  - Kontak
+- Dashboard admin:
+  - Statistik ringkas
+  - CRUD mahasiswa
+  - Manajemen galeri
+  - Manajemen user
+  - Pesan kontak
+  - Pengaturan konten website
+- Dashboard user:
+  - Edit profil
+  - Upload foto galeri
+- Security:
+  - route admin diproteksi `auth + role + gate`
+  - CSRF aktif
+  - validasi upload gambar
+  - fallback image aman
+  - cleanup file lama saat update/delete
+- Testing:
+  - login
+  - akses admin
+  - CRUD mahasiswa
+  - pembatasan role
+  - audit upload dan security dasar
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Teknologi
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Laravel 13
+- PHP 8.4
+- MySQL 8
+- Vite
+- Tailwind CSS
+- Docker Compose
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Kebutuhan Lokal
 
-## Agentic Development
+- PHP 8.4+
+- Composer
+- Node.js + npm
+- MySQL atau MariaDB
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalasi Lokal
+
+1. Clone project dan masuk ke direktori project.
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <repository-url>
+cd web-kelas-elektro
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. Install dependency backend.
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Install dependency frontend.
 
-## Code of Conduct
+```bash
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Salin file environment.
 
-## Security Vulnerabilities
+```bash
+cp .env.example .env
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Atur koneksi database pada `.env`.
 
-## License
+Contoh minimal:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```env
+APP_NAME="Kelas Elektronika Industri"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=web_kelas_elektro
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+6. Generate application key.
+
+```bash
+php artisan key:generate
+```
+
+7. Jalankan migrasi dan seeding.
+
+```bash
+php artisan migrate --seed
+```
+
+8. Buat storage link.
+
+```bash
+php artisan storage:link
+```
+
+9. Jalankan aplikasi.
+
+Untuk mode development penuh:
+
+```bash
+composer run dev
+```
+
+Atau dipisah:
+
+```bash
+php artisan serve
+npm run dev
+```
+
+## Penggunaan Docker
+
+Project ini sudah menyertakan:
+
+- [Dockerfile](/home/dimas/web-kelas-elektro/Dockerfile)
+- [docker-compose.yml](/home/dimas/web-kelas-elektro/docker-compose.yml)
+- [docker-entrypoint.sh](/home/dimas/web-kelas-elektro/docker-entrypoint.sh)
+
+Service yang tersedia:
+
+- `app` Laravel
+- `mysql` database MySQL 8
+- `phpmyadmin` untuk akses database via browser
+
+### Menjalankan Dengan Docker
+
+```bash
+docker compose up --build
+```
+
+Setelah container aktif:
+
+- aplikasi: `http://localhost:8001`
+- phpMyAdmin: `http://localhost:8082`
+- MySQL host lokal: `127.0.0.1:3307`
+
+### Konfigurasi Database Docker
+
+Nilai database dari `docker-compose.yml`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=web_kelas_elektro
+DB_USERNAME=laravel
+DB_PASSWORD=laravel
+```
+
+`docker-entrypoint.sh` akan:
+
+- menunggu MySQL siap
+- menjalankan migrasi
+- menjalankan seed jika user belum ada
+- menjalankan server Laravel
+
+Jika perlu menjalankan perintah manual di container:
+
+```bash
+docker compose exec app php artisan migrate --seed
+docker compose exec app php artisan storage:link
+docker compose exec app php artisan test
+```
+
+## Migration dan Seeding
+
+Menjalankan migration:
+
+```bash
+php artisan migrate
+```
+
+Rollback migration terakhir:
+
+```bash
+php artisan migrate:rollback
+```
+
+Menjalankan seeder penuh:
+
+```bash
+php artisan db:seed
+```
+
+Menjalankan seeder tertentu:
+
+```bash
+php artisan db:seed --class=AdminUserSeeder
+php artisan db:seed --class=StudentSeeder
+php artisan db:seed --class=GallerySeeder
+```
+
+## Seeder yang Tersedia
+
+- `DatabaseSeeder`
+- `AdminUserSeeder`
+- `DemoUserSeeder`
+- `SiteSettingSeeder`
+- `StudentSeeder`
+- `GallerySeeder`
+
+Seeder default akan menyiapkan:
+
+- 1 admin default
+- 1 user default
+- pengaturan website
+- minimal 15 data mahasiswa demo
+- beberapa item galeri demo
+
+## Akun Default
+
+Admin:
+
+- Email: `admin@example.com`
+- Password: `password`
+
+User:
+
+- Email: `user@example.com`
+- Password: `password`
+
+## Testing
+
+Menjalankan seluruh test:
+
+```bash
+php artisan test
+```
+
+Menjalankan test flow utama:
+
+```bash
+php artisan test tests/Feature/MainProjectFlowTest.php
+```
+
+Menjalankan audit upload dan security:
+
+```bash
+php artisan test tests/Feature/SecurityAndUploadAuditTest.php
+```
+
+## Struktur Fitur Penting
+
+- [routes/web.php](/home/dimas/web-kelas-elektro/routes/web.php)
+- [app/Http/Controllers/PublicPageController.php](/home/dimas/web-kelas-elektro/app/Http/Controllers/PublicPageController.php)
+- [app/Http/Controllers/Admin/StudentController.php](/home/dimas/web-kelas-elektro/app/Http/Controllers/Admin/StudentController.php)
+- [app/Http/Controllers/Admin/GalleryItemController.php](/home/dimas/web-kelas-elektro/app/Http/Controllers/Admin/GalleryItemController.php)
+- [app/Http/Controllers/Admin/SiteSettingController.php](/home/dimas/web-kelas-elektro/app/Http/Controllers/Admin/SiteSettingController.php)
+- [app/Models/Student.php](/home/dimas/web-kelas-elektro/app/Models/Student.php)
+- [resources/views/pages/home.blade.php](/home/dimas/web-kelas-elektro/resources/views/pages/home.blade.php)
+
+## Checklist Sebelum Hosting
+
+- set `APP_ENV=production`
+- set `APP_DEBUG=false`
+- pastikan `.env` tidak masuk Git
+- generate `APP_KEY` di server
+- jalankan migration dan seeding sesuai kebutuhan
+- jalankan `php artisan storage:link`
+- pastikan `storage` dan `bootstrap/cache` writable
+- jalankan `npm run build`
+- ganti akun demo default jika website dipublikasikan
+
+## Catatan
+
+- Jika environment lama masih memakai struktur tabel `students` versi lama, jalankan migration terbaru sebelum dipakai penuh.
+- Warning cache hasil test dari `vendor/pestphp/pest/.temp/test-results` bisa muncul jika permission vendor terbatas, tetapi tidak mempengaruhi hasil test fitur.

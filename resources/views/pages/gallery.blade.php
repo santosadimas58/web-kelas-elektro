@@ -8,18 +8,15 @@
                 Galeri kenangan dan dokumentasi kelas
             </h1>
             <p class="mt-6 text-lg leading-8 text-slate-300">
-                Grid berikut menampilkan placeholder foto dengan judul dan deskripsi singkat untuk memudahkan penggantian
-                aset dokumentasi di tahap berikutnya.
+                Setiap foto pada halaman ini ditarik dari database dan dapat diperbarui dari panel admin atau unggahan user yang diizinkan.
             </p>
         </div>
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        @if (session('status'))
-            <div class="mb-8 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm font-medium text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-300">
-                {{ session('status') }}
-            </div>
-        @endif
+        <div class="mb-8">
+            @include('partials.flash')
+        </div>
 
         @auth
             @if (auth()->user()->role === 'user')
@@ -70,7 +67,7 @@
         @endauth
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            @foreach ($gallery as $item)
+            @forelse ($gallery as $item)
                 <article class="gallery-card">
                     @if ($item->display_image_url)
                         <img src="{{ $item->display_image_url }}" alt="{{ $item->title }}" class="h-72 w-full rounded-[1.5rem] object-cover ring-1 ring-slate-200 dark:ring-slate-700">
@@ -87,7 +84,14 @@
                         <p class="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ $item->description }}</p>
                     </div>
                 </article>
-            @endforeach
+            @empty
+                <article class="gallery-card md:col-span-2 xl:col-span-3">
+                    <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">Galeri belum tersedia</h2>
+                    <p class="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                        Tambahkan dokumentasi dari dashboard admin agar halaman ini menampilkan foto kegiatan kelas.
+                    </p>
+                </article>
+            @endforelse
         </div>
     </section>
 @endsection

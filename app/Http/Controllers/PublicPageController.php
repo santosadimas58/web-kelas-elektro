@@ -6,9 +6,10 @@ use App\Models\ContactMessage;
 use App\Models\GalleryItem;
 use App\Models\SiteSetting;
 use App\Models\Student;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\File;
 use Illuminate\View\View;
 
 class PublicPageController extends Controller
@@ -44,10 +45,10 @@ class PublicPageController extends Controller
     {
         return view('pages.students', [
             'title' => 'Mahasiswa',
-            'students' => User::query()
-                ->where('role', 'user')
+            'students' => Student::query()
+                ->orderBy('sort_order')
                 ->orderBy('name')
-                ->get(),
+                ->paginate(9),
             'siteSetting' => SiteSetting::current(),
         ]);
     }
@@ -73,10 +74,17 @@ class PublicPageController extends Controller
      */
     public function uploadGallery(Request $request): RedirectResponse
     {
+        Gate::authorize('upload-gallery');
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:1000'],
-            'image' => ['required', 'image', 'max:4096'],
+            'image' => [
+                'required',
+                File::image()
+                    ->types(['jpg', 'jpeg', 'png', 'webp'])
+                    ->max(4096),
+            ],
         ]);
 
         $imagePath = $request->file('image')->store('gallery-images', 'public');

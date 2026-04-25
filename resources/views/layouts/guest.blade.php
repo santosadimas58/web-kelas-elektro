@@ -4,8 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
-        <title>Auth | {{ config('classroom.site_name') }}</title>
+        <title>{{ $title ?? 'Auth' }} | {{ $sharedSiteSetting->site_name ?? config('classroom.site_name') }}</title>
+        <meta
+            name="description"
+            content="{{ $sharedSiteSetting->tagline ?? 'Autentikasi website kelas.' }}"
+        >
 
         @include('layouts.partials.theme-head')
 
@@ -31,8 +36,8 @@
                             class="h-14 w-14 object-contain"
                         >
                         <div>
-                            <p class="font-display text-lg font-bold text-slate-950 dark:text-slate-100">Kelas Elektronika Industri</p>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">Pendidikan Teknik Elektro</p>
+                            <p class="font-display text-lg font-bold text-slate-950 dark:text-slate-100">{{ $sharedSiteSetting->site_name ?? 'Kelas Elektronika Industri' }}</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">{{ $sharedSiteSetting->department ?? 'Pendidikan Teknik Elektro' }}</p>
                         </div>
                     </div>
                 </a>

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class GalleryItem extends Model
 {
@@ -35,7 +37,13 @@ class GalleryItem extends Model
     public function getDisplayImageUrlAttribute(): ?string
     {
         if ($this->image_path) {
-            return '/storage/'.$this->image_path;
+            if (Str::startsWith($this->image_path, ['http://', 'https://'])) {
+                return $this->image_path;
+            }
+
+            return Storage::disk('public')->exists($this->image_path)
+                ? Storage::url($this->image_path)
+                : ($this->image_url ?: null);
         }
 
         return $this->image_url;

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
-class UserController extends Controller
+class UserController extends AdminController
 {
     /**
      * Display all users.
@@ -67,6 +66,18 @@ class UserController extends Controller
     {
         $validated = $this->validateUser($request, $user);
 
+        if (
+            $user->id === auth()->id()
+            && $user->role === 'admin'
+            && ($validated['role'] ?? $user->role) !== 'admin'
+            && User::query()->where('role', 'admin')->count() === 1
+        ) {
+            return redirect()
+                ->route('admin.users.edit', $user)
+                ->withInput()
+                ->with('error', 'Admin terakhir tidak dapat diubah menjadi user biasa.');
+        }
+
         if (! empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
@@ -90,7 +101,13 @@ class UserController extends Controller
         if (auth()->id() === $user->id) {
             return redirect()
                 ->route('admin.users.index')
-                ->with('status', 'Akun yang sedang dipakai tidak dapat dihapus.');
+                ->with('error', 'Akun yang sedang dipakai tidak dapat dihapus.');
+        }
+
+        if ($user->role === 'admin' && User::query()->where('role', 'admin')->count() === 1) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('error', 'Admin terakhir tidak dapat dihapus.');
         }
 
         $user->delete();

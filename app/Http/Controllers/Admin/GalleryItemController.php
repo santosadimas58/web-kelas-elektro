@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\GalleryItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
-class GalleryItemController extends Controller
+class GalleryItemController extends AdminController
 {
     /**
      * Display a listing of gallery items.
@@ -38,7 +37,7 @@ class GalleryItemController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        GalleryItem::query()->create($this->validateItem($request));
+        GalleryItem::query()->create($this->prepareItemPayload($this->validateItem($request)));
 
         return redirect()
             ->route('admin.gallery.index')
@@ -61,7 +60,7 @@ class GalleryItemController extends Controller
      */
     public function update(Request $request, GalleryItem $gallery): RedirectResponse
     {
-        $gallery->update($this->validateItem($request));
+        $gallery->update($this->prepareItemPayload($this->validateItem($request), $gallery));
 
         return redirect()
             ->route('admin.gallery.index')
@@ -97,5 +96,24 @@ class GalleryItemController extends Controller
             'image_url' => ['nullable', 'url', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
         ]);
+    }
+
+    /**
+     * Normalize gallery payload and clean stale uploaded files when switching to an external URL.
+     *
+     * @param  array<string, mixed>  $validated
+     * @return array<string, mixed>
+     */
+    protected function prepareItemPayload(array $validated, ?GalleryItem $gallery = null): array
+    {
+        if (! empty($validated['image_url'])) {
+            if ($gallery?->image_path) {
+                Storage::disk('public')->delete($gallery->image_path);
+            }
+
+            $validated['image_path'] = null;
+        }
+
+        return $validated;
     }
 }

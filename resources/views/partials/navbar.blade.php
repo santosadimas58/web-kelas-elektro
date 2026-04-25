@@ -6,6 +6,7 @@
         ['label' => 'Galeri', 'route' => 'gallery'],
         ['label' => 'Kontak', 'route' => 'contact'],
     ];
+    $dashboardLabel = auth()->check() && auth()->user()->isAdmin() ? 'Admin Panel' : 'Dashboard';
 @endphp
 
 <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl dark:border-slate-200 dark:bg-white/95">
@@ -45,7 +46,7 @@
 
             @auth
                 <a href="{{ route('dashboard') }}" class="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-100">
-                    Dashboard
+                    {{ $dashboardLabel }}
                 </a>
             @else
                 <a href="{{ route('login') }}" class="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-100">
@@ -85,7 +86,7 @@
 
                     @auth
                         <a href="{{ route('dashboard') }}" class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                            Dashboard
+                            {{ $dashboardLabel }}
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100">

@@ -1,13 +1,13 @@
 @extends('layouts.public')
 
 @section('content')
-    <section class="hero-section overflow-hidden bg-slate-950 text-white">
+    <section class="hero-section bg-slate-950 text-white">
         <div class="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24">
             <div class="relative z-10">
                 <p class="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-yellow-300">
                     Dokumentasi Kelas
                 </p>
-                <h1 class="mt-6 max-w-3xl font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+                <h1 class="mt-4 max-w-3xl pt-2 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-balance sm:pt-3 sm:text-5xl lg:mt-6 lg:text-6xl">
                     {{ $siteSetting->hero_title }}
                 </h1>
                 <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
@@ -29,12 +29,12 @@
                         <p class="mt-2 text-3xl font-bold text-white">{{ $students->count() }}</p>
                     </div>
                     <div class="hero-glass rounded-3xl border border-white/10 p-5">
-                        <p class="text-sm text-slate-300">Halaman Publik</p>
-                        <p class="mt-2 text-3xl font-bold text-white">5</p>
+                        <p class="text-sm text-slate-300">Total Galeri</p>
+                        <p class="mt-2 text-3xl font-bold text-white">{{ $gallery->count() }}</p>
                     </div>
                     <div class="hero-glass rounded-3xl border border-white/10 p-5">
-                        <p class="text-sm text-slate-300">Nuansa Website</p>
-                        <p class="mt-2 text-xl font-bold text-white">Profesional & Hangat</p>
+                        <p class="text-sm text-slate-300">Kontak Publik</p>
+                        <p class="mt-2 text-sm font-bold text-white sm:text-base">{{ $siteSetting->contact_email }}</p>
                     </div>
                 </div>
             </div>
@@ -55,12 +55,16 @@
                             @foreach ($students->take(4) as $student)
                                 <div class="rounded-3xl bg-white px-4 py-4 text-slate-900 shadow-sm">
                                     <div class="flex items-center gap-3">
-                                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-sm font-bold text-yellow-300">
-                                            {{ $student->initials }}
-                                        </div>
+                                        @if ($student->photo_image_url)
+                                            <img src="{{ $student->photo_image_url }}" alt="{{ $student->name }}" class="h-12 w-12 rounded-2xl object-cover ring-1 ring-slate-200">
+                                        @else
+                                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-sm font-bold text-yellow-300">
+                                                {{ $student->initials }}
+                                            </div>
+                                        @endif
                                         <div>
                                             <p class="font-semibold">{{ $student->name }}</p>
-                                            <p class="text-sm text-slate-500">{{ $student->study_focus ?: 'Mahasiswa Kelas' }}</p>
+                                            <p class="text-sm text-slate-500">{{ $student->prodi }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -85,15 +89,15 @@
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="feature-card">
-                    <h3 class="feature-title">Profil 10 Mahasiswa</h3>
+                    <h3 class="feature-title">Profil Mahasiswa</h3>
                     <p class="feature-copy">
-                        Struktur kartu mahasiswa sudah disiapkan agar foto, nama, dan bio bisa diganti dengan data asli.
+                        Profil mahasiswa tersusun dari database sehingga nama, foto, NIM, dan informasi akademik tampil konsisten di seluruh halaman.
                     </p>
                 </div>
                 <div class="feature-card">
                     <h3 class="feature-title">Galeri Kenangan</h3>
                     <p class="feature-copy">
-                        Grid galeri menampilkan dokumentasi placeholder yang siap diisi foto kegiatan kelas.
+                        Dokumentasi galeri menampilkan foto kegiatan kelas yang dapat diperbarui langsung dari panel admin maupun unggahan user yang diizinkan.
                     </p>
                 </div>
                 <div class="feature-card">
@@ -127,10 +131,17 @@
             <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 @foreach ($students->take(4) as $student)
                     <article class="student-card">
-                        <div class="student-avatar">{{ $student->initials }}</div>
+                        @if ($student->photo_image_url)
+                            <img src="{{ $student->photo_image_url }}" alt="{{ $student->name }}" class="h-44 w-full rounded-[1.75rem] object-cover ring-1 ring-slate-200 dark:ring-slate-700">
+                        @else
+                            <div class="student-avatar">{{ $student->initials }}</div>
+                        @endif
                         <div class="mt-5">
                             <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-100">{{ $student->name }}</h3>
-                            <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ $student->bio }}</p>
+                            <p class="mt-2 text-sm font-medium text-blue-700 dark:text-blue-300">{{ $student->prodi }}</p>
+                            <p class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                                NIM {{ $student->nim }} • Angkatan {{ $student->angkatan }}
+                            </p>
                         </div>
                     </article>
                 @endforeach
@@ -149,22 +160,29 @@
             </a>
         </div>
 
-        <div class="mt-10 grid gap-6 lg:grid-cols-3">
-            @foreach ($gallery->take(3) as $item)
-                <article class="gallery-card">
-                    @if ($item->image_url)
-                        <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="h-56 w-full rounded-[1.5rem] object-cover ring-1 ring-slate-200 dark:ring-slate-700">
-                    @else
-                        <div class="gallery-placeholder">
-                            <span>{{ $item->title }}</span>
+            <div class="mt-10 grid gap-6 lg:grid-cols-3">
+                @forelse ($gallery->take(3) as $item)
+                    <article class="gallery-card">
+                        @if ($item->display_image_url)
+                            <img src="{{ $item->display_image_url }}" alt="{{ $item->title }}" class="h-56 w-full rounded-[1.5rem] object-cover ring-1 ring-slate-200 dark:ring-slate-700">
+                        @else
+                            <div class="gallery-placeholder">
+                                <span>{{ $item->title }}</span>
+                            </div>
+                        @endif
+                        <div class="mt-5">
+                            <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-100">{{ $item->title }}</h3>
+                            <p class="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ $item->description }}</p>
                         </div>
-                    @endif
-                    <div class="mt-5">
-                        <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-100">{{ $item->title }}</h3>
-                        <p class="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{{ $item->description }}</p>
-                    </div>
-                </article>
-            @endforeach
+                    </article>
+                @empty
+                    <article class="gallery-card lg:col-span-3">
+                        <h3 class="text-lg font-semibold text-slate-950 dark:text-slate-100">Belum ada dokumentasi galeri</h3>
+                        <p class="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                            Admin dapat menambahkan galeri dari dashboard agar halaman ini langsung menampilkan dokumentasi terbaru.
+                        </p>
+                    </article>
+                @endforelse
         </div>
     </section>
 

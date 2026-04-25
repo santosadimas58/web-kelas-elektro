@@ -15,7 +15,7 @@ class EnsureUserRole
     {
         $user = $request->user();
 
-        if (! $user || ! in_array($user->role, $roles, true)) {
+        if (! $user || ! $user->hasRole(...$roles)) {
             abort(403);
         }
 

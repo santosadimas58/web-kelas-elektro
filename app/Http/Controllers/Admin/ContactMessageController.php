@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class ContactMessageController extends Controller
+class ContactMessageController extends AdminController
 {
     /**
      * Display stored contact messages.
