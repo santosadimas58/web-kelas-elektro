@@ -44,6 +44,44 @@ test('user gallery upload rejects non-image files', function () {
     $this->assertDatabaseCount('gallery_items', 0);
 });
 
+test('contact form is rate limited', function () {
+    for ($attempt = 1; $attempt <= 3; $attempt++) {
+        $this->post(route('contact.submit'), [
+            'name' => 'Visitor '.$attempt,
+            'email' => 'visitor'.$attempt.'@example.com',
+            'message' => 'Pesan kontak untuk audit rate limit.',
+        ])->assertRedirect(route('contact', absolute: false));
+    }
+
+    $this->post(route('contact.submit'), [
+        'name' => 'Visitor Limited',
+        'email' => 'limited@example.com',
+        'message' => 'Pesan keempat harus terkena rate limit.',
+    ])->assertTooManyRequests();
+});
+
+test('user gallery upload is rate limited', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create([
+        'role' => 'user',
+    ]);
+
+    for ($attempt = 1; $attempt <= 6; $attempt++) {
+        $this->actingAs($user)->post(route('gallery.upload'), [
+            'title' => 'Foto Audit '.$attempt,
+            'description' => 'Upload audit rate limit.',
+            'image' => fakeAuditImage('gallery-'.$attempt.'.png'),
+        ])->assertRedirect(route('gallery', absolute: false));
+    }
+
+    $this->actingAs($user)->post(route('gallery.upload'), [
+        'title' => 'Foto Audit Limited',
+        'description' => 'Upload ketujuh harus terkena rate limit.',
+        'image' => fakeAuditImage('gallery-limited.png'),
+    ])->assertTooManyRequests();
+});
+
 test('profile photo replacement deletes the old file', function () {
     Storage::fake('public');
 

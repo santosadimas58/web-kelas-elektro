@@ -12,6 +12,10 @@ class DemoUserSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->environment('production')) {
+            return;
+        }
+
         User::query()->updateOrCreate(
             ['email' => 'user@example.com'],
             [

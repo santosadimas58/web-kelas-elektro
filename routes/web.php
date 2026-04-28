@@ -15,7 +15,9 @@ Route::get('/tentang', [PublicPageController::class, 'about'])->name('about');
 Route::get('/mahasiswa', [PublicPageController::class, 'students'])->name('students');
 Route::get('/galeri', [PublicPageController::class, 'gallery'])->name('gallery');
 Route::get('/kontak', [PublicPageController::class, 'contact'])->name('contact');
-Route::post('/kontak', [PublicPageController::class, 'submitContact'])->name('contact.submit');
+Route::post('/kontak', [PublicPageController::class, 'submitContact'])
+    ->middleware('throttle:contact-form')
+    ->name('contact.submit');
 
 Route::middleware(['auth', 'active-user'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -31,7 +33,7 @@ Route::middleware(['auth', 'active-user'])->group(function () {
     });
 
     Route::post('/galeri/upload', [PublicPageController::class, 'uploadGallery'])
-        ->middleware(['role:user', 'can:upload-gallery'])
+        ->middleware(['role:user', 'can:upload-gallery', 'throttle:gallery-upload'])
         ->name('gallery.upload');
 
     Route::prefix('admin')->name('admin.')->middleware(['role:admin', 'can:access-admin-panel'])->group(function () {

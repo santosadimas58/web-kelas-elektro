@@ -52,9 +52,6 @@
                 <a href="{{ route('login') }}" class="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-100">
                     Login
                 </a>
-                <a href="{{ route('register') }}" class="inline-flex rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-yellow-300">
-                    Register
-                </a>
             @endauth
         </div>
 
@@ -91,9 +88,6 @@
                     @else
                         <a href="{{ route('login') }}" class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
                             Login
-                        </a>
-                        <a href="{{ route('register') }}" class="rounded-2xl bg-yellow-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-yellow-300">
-                            Register
                         </a>
                     @endauth
                 </div>

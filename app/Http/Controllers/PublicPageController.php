@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactMessage;
 use App\Models\GalleryItem;
 use App\Models\SiteSetting;
-use App\Models\Student;
+use App\Support\StudentAccountSynchronizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -21,7 +21,7 @@ class PublicPageController extends Controller
     {
         return view('pages.home', [
             'title' => 'Beranda',
-            'students' => Student::query()->orderBy('sort_order')->orderBy('name')->get(),
+            'students' => StudentAccountSynchronizer::syncedStudentQuery()->get(),
             'gallery' => GalleryItem::query()->orderBy('sort_order')->latest()->get(),
             'siteSetting' => SiteSetting::current(),
         ]);
@@ -45,10 +45,7 @@ class PublicPageController extends Controller
     {
         return view('pages.students', [
             'title' => 'Mahasiswa',
-            'students' => Student::query()
-                ->orderBy('sort_order')
-                ->orderBy('name')
-                ->paginate(9),
+            'students' => StudentAccountSynchronizer::syncedStudentQuery()->paginate(9),
             'siteSetting' => SiteSetting::current(),
         ]);
     }

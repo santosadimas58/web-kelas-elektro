@@ -28,7 +28,7 @@ class GalleryItemController extends AdminController
     {
         return view('admin.gallery.create', [
             'title' => 'Tambah Galeri',
-            'item' => new GalleryItem(),
+            'item' => new GalleryItem,
         ]);
     }
 

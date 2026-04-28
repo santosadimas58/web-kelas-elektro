@@ -34,6 +34,8 @@ Project ini dirancang agar:
   - route admin diproteksi `auth + role + gate`
   - CSRF aktif
   - validasi upload gambar
+  - public registration ditutup; akun user dibuat oleh admin
+  - rate limiting untuk form kontak, upload galeri, reset password, dan aksi password sensitif
   - fallback image aman
   - cleanup file lama saat update/delete
 - Testing:
@@ -46,7 +48,7 @@ Project ini dirancang agar:
 ## Teknologi
 
 - Laravel 13
-- PHP 8.4
+- PHP 8.3+
 - MySQL 8
 - Vite
 - Tailwind CSS
@@ -54,10 +56,11 @@ Project ini dirancang agar:
 
 ## Kebutuhan Lokal
 
-- PHP 8.4+
+- PHP 8.3+
 - Composer
 - Node.js + npm
 - MySQL atau MariaDB
+- Extension PHP `pdo_mysql` jika memakai MySQL dari host/non-Docker
 
 ## Instalasi Lokal
 
@@ -95,6 +98,10 @@ APP_NAME="Kelas Elektronika Industri"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
+
+ADMIN_NAME="Admin Kelas"
+# ADMIN_EMAIL=admin@example.com
+# ADMIN_PASSWORD=password
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -191,6 +198,23 @@ docker compose exec app php artisan storage:link
 docker compose exec app php artisan test
 ```
 
+## Deploy Tanpa Docker
+
+Project ini bisa dipasang di shared hosting, cPanel, atau VPS native tanpa Docker selama server menyediakan PHP 8.3+, MySQL/MariaDB, dan extension `pdo_mysql`.
+
+Gunakan file [.env.hosting.example](/home/dimas/web-kelas-elektro/.env.hosting.example) sebagai acuan konfigurasi production. Panduan lengkap ada di [docs/hosting-non-docker.md](/home/dimas/web-kelas-elektro/docs/hosting-non-docker.md).
+
+Hal paling penting untuk hosting non-Docker:
+
+- document root domain harus mengarah ke folder `public`
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `DB_HOST` biasanya `127.0.0.1` atau host database dari provider
+- `storage` dan `bootstrap/cache` harus writable
+- jalankan `php artisan migrate --force`
+- jalankan `php artisan storage:link`
+- jalankan `npm run build` sebelum upload jika hosting tidak menyediakan Node.js
+
 ## Migration dan Seeding
 
 Menjalankan migration:
@@ -230,23 +254,33 @@ php artisan db:seed --class=GallerySeeder
 
 Seeder default akan menyiapkan:
 
-- 1 admin default
-- 1 user default
+- 1 admin
+- 1 user demo hanya untuk environment non-production
 - pengaturan website
 - minimal 15 data mahasiswa demo
 - beberapa item galeri demo
 
-## Akun Default
+## Akun Development
 
-Admin:
+Untuk local development, jika `ADMIN_EMAIL` dan `ADMIN_PASSWORD` tidak diatur, seeder akan membuat akun:
 
 - Email: `admin@example.com`
 - Password: `password`
 
-User:
+Seeder juga membuat user demo hanya saat environment bukan `production`:
 
 - Email: `user@example.com`
 - Password: `password`
+
+Untuk production, isi admin asli di `.env` server:
+
+```env
+ADMIN_NAME="Admin Kelas"
+ADMIN_EMAIL="admin@domain-anda.com"
+ADMIN_PASSWORD="gunakan-password-kuat"
+```
+
+Pada environment `production`, user demo `user@example.com` tidak dibuat otomatis.
 
 ## Testing
 
@@ -282,13 +316,16 @@ php artisan test tests/Feature/SecurityAndUploadAuditTest.php
 
 - set `APP_ENV=production`
 - set `APP_DEBUG=false`
+- set `APP_URL` sesuai domain final
+- pastikan server punya extension PHP `pdo_mysql`
 - pastikan `.env` tidak masuk Git
 - generate `APP_KEY` di server
 - jalankan migration dan seeding sesuai kebutuhan
 - jalankan `php artisan storage:link`
 - pastikan `storage` dan `bootstrap/cache` writable
 - jalankan `npm run build`
-- ganti akun demo default jika website dipublikasikan
+- set `ADMIN_EMAIL` dan `ADMIN_PASSWORD` untuk akun admin production
+- pastikan akun demo default tidak aktif di website production
 
 ## Catatan
 

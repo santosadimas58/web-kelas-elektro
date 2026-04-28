@@ -2,6 +2,11 @@
 
 return [
     'site_name' => 'Kelas Elektronika Industri',
+    'admin' => [
+        'name' => env('ADMIN_NAME', 'Admin Kelas'),
+        'email' => env('ADMIN_EMAIL'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
     'department' => 'Pendidikan Teknik Elektro',
     'tagline' => 'Ruang dokumentasi kelas yang merekam profil mahasiswa, cerita pembelajaran, dan kenangan bersama.',
     'about' => 'Program Studi Pendidikan Teknik Elektro (PTE) adalah bidang studi di perguruan tinggi yang memadukan ilmu teknik elektro (arus kuat/lemah) dengan ilmu kependidikan. Tujuannya adalah menghasilkan lulusan yang kompeten di bidang teknik elektro sekaligus memiliki kemampuan pedagogis (mengajar) untuk menjadi pendidik (guru SMK/instruktur) maupun praktisi teknik.',

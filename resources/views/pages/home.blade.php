@@ -24,17 +24,17 @@
                 </div>
 
                 <div class="mt-12 grid gap-4 sm:grid-cols-3">
-                    <div class="hero-glass rounded-3xl border border-white/10 p-5">
+                    <div class="hero-glass min-w-0 rounded-3xl border border-white/10 p-5">
                         <p class="text-sm text-slate-300">Total Mahasiswa</p>
                         <p class="mt-2 text-3xl font-bold text-white">{{ $students->count() }}</p>
                     </div>
-                    <div class="hero-glass rounded-3xl border border-white/10 p-5">
+                    <div class="hero-glass min-w-0 rounded-3xl border border-white/10 p-5">
                         <p class="text-sm text-slate-300">Total Galeri</p>
                         <p class="mt-2 text-3xl font-bold text-white">{{ $gallery->count() }}</p>
                     </div>
-                    <div class="hero-glass rounded-3xl border border-white/10 p-5">
+                    <div class="hero-glass min-w-0 rounded-3xl border border-white/10 p-5">
                         <p class="text-sm text-slate-300">Kontak Publik</p>
-                        <p class="mt-2 text-sm font-bold text-white sm:text-base">{{ $siteSetting->contact_email }}</p>
+                        <p class="mt-2 break-words text-sm font-bold text-white sm:text-base">{{ $siteSetting->contact_email }}</p>
                     </div>
                 </div>
             </div>

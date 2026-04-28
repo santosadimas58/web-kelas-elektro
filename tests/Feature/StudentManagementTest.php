@@ -18,13 +18,43 @@ test('student management index is paginated for admins', function () {
         'role' => 'admin',
     ]);
 
-    Student::factory()->count(12)->create();
+    User::factory()->count(12)->create([
+        'role' => 'user',
+    ]);
+    Student::factory()->count(4)->create();
 
     $response = $this->actingAs($admin)->get(route('admin.students.index'));
 
     $response->assertOk();
     expect($response->viewData('students')->total())->toBe(12);
     expect($response->viewData('students')->count())->toBe(10);
+});
+
+test('student management index is synchronized with registered accounts', function () {
+    $admin = User::factory()->create([
+        'name' => 'Admin Kelas',
+        'email' => 'admin@example.com',
+        'role' => 'admin',
+    ]);
+    User::factory()->create([
+        'name' => 'Dim San',
+        'email' => 'dimsan@example.com',
+        'role' => 'user',
+    ]);
+    User::factory()->create([
+        'name' => 'Supzero',
+        'email' => 'supzero@example.com',
+        'role' => 'user',
+    ]);
+    Student::factory()->count(6)->create();
+
+    $response = $this->actingAs($admin)->get(route('admin.students.index'));
+
+    $response->assertOk();
+    expect($response->viewData('students')->total())->toBe(2);
+    expect($response->viewData('students')->pluck('name')->all())->not->toContain('Admin Kelas');
+    $response->assertSee('Dim San');
+    $response->assertSee('Supzero');
 });
 
 test('regular users cannot access student management', function () {

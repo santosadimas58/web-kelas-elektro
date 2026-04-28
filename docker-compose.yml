@@ -6,6 +6,16 @@ services:
     container_name: web-kelas-app
     restart: unless-stopped
     working_dir: /var/www
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8001
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: web_kelas_elektro
+      DB_USERNAME: laravel
+      DB_PASSWORD: laravel
     volumes:
       - ./:/var/www
     ports:

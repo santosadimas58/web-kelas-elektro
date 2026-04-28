@@ -2,6 +2,7 @@
 
 use App\Models\SiteSetting;
 use App\Models\Student;
+use App\Models\User;
 
 test('public students page displays paginated student cards from the database', function () {
     SiteSetting::query()->create([
@@ -22,11 +23,19 @@ test('public students page displays paginated student cards from the database', 
         'cta_description' => 'CTA description',
     ]);
 
-    Student::factory()->count(12)->create();
+    User::factory()->count(12)->create([
+        'role' => 'user',
+    ]);
+    User::factory()->create([
+        'name' => 'Admin Kelas',
+        'role' => 'admin',
+    ]);
+    Student::factory()->count(4)->create();
 
     $response = $this->get(route('students'));
 
     $response->assertOk();
     expect($response->viewData('students')->total())->toBe(12);
     expect($response->viewData('students')->count())->toBe(9);
+    $response->assertDontSee('Admin Kelas');
 });

@@ -29,7 +29,7 @@ class UserController extends AdminController
     {
         return view('admin.users.create', [
             'title' => 'Tambah Akun',
-            'user' => new User(),
+            'user' => new User,
         ]);
     }
 

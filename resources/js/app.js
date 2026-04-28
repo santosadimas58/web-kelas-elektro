@@ -38,6 +38,47 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (ev
     applyTheme(event.matches ? 'dark' : 'light');
 });
 
+const cookieConsentName = 'cookie_consent';
+const cookieConsentMaxAge = 60 * 60 * 24 * 180;
+
+const getCookie = (name) => document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${name}=`))
+    ?.split('=')[1];
+
+const setCookieConsent = (value) => {
+    document.cookie = `${cookieConsentName}=${value}; Max-Age=${cookieConsentMaxAge}; Path=/; SameSite=Lax`;
+};
+
+const initCookieConsent = () => {
+    const banner = document.querySelector('[data-cookie-consent]');
+
+    if (!banner || getCookie(cookieConsentName)) {
+        return;
+    }
+
+    const hideBanner = (value) => {
+        setCookieConsent(value);
+        banner.classList.add('hidden');
+    };
+
+    banner.classList.remove('hidden');
+
+    banner.querySelector('[data-cookie-consent-accept]')?.addEventListener('click', () => {
+        hideBanner('accepted');
+    });
+
+    banner.querySelector('[data-cookie-consent-decline]')?.addEventListener('click', () => {
+        hideBanner('declined');
+    });
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCookieConsent);
+} else {
+    initCookieConsent();
+}
+
 window.Alpine = Alpine;
 
 Alpine.start();

@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class AdminUserSeeder extends Seeder
 {
@@ -12,12 +14,21 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
+        $isProduction = app()->environment('production');
+        $email = config('classroom.admin.email') ?: ($isProduction ? null : 'admin@example.com');
+        $password = config('classroom.admin.password') ?: ($isProduction ? null : 'password');
+        $name = config('classroom.admin.name') ?: 'Admin Kelas';
+
+        if (! $email || ! $password) {
+            throw new RuntimeException('Set ADMIN_EMAIL and ADMIN_PASSWORD before seeding the production admin account.');
+        }
+
         User::query()->updateOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => $email],
             [
-                'name' => 'Admin Kelas',
+                'name' => $name,
                 'role' => 'admin',
-                'password' => 'password',
+                'password' => Hash::make($password),
             ]
         );
     }

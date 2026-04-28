@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Student;
+use App\Support\StudentAccountSynchronizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -20,10 +21,7 @@ class StudentController extends AdminController
     {
         return view('admin.students.index', [
             'title' => 'Kelola Mahasiswa',
-            'students' => Student::query()
-                ->orderBy('sort_order')
-                ->orderBy('name')
-                ->paginate(10),
+            'students' => StudentAccountSynchronizer::syncedStudentQuery()->paginate(10),
         ]);
     }
 
@@ -34,7 +32,7 @@ class StudentController extends AdminController
     {
         return view('admin.students.create', [
             'title' => 'Tambah Mahasiswa',
-            'student' => new Student(),
+            'student' => new Student,
         ]);
     }
 
