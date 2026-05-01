@@ -11,6 +11,10 @@ use Illuminate\View\View;
 
 class UserController extends AdminController
 {
+    private const MAX_ADMIN_ACCOUNTS = 1;
+
+    private const MAX_STUDENT_ACCOUNTS = 10;
+
     /**
      * Display all users.
      */
@@ -39,6 +43,11 @@ class UserController extends AdminController
     public function store(Request $request): RedirectResponse
     {
         $validated = $this->validateUser($request);
+
+        if ($limitResponse = $this->accountLimitResponse($validated['role'], route('admin.users.create'))) {
+            return $limitResponse;
+        }
+
         $validated['password'] = Hash::make($validated['password']);
 
         User::query()->create($validated);
@@ -65,17 +74,22 @@ class UserController extends AdminController
     public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $this->validateUser($request, $user);
+        $targetRole = $validated['role'] ?? $user->role;
 
         if (
             $user->id === auth()->id()
             && $user->role === 'admin'
-            && ($validated['role'] ?? $user->role) !== 'admin'
+            && $targetRole !== 'admin'
             && User::query()->where('role', 'admin')->count() === 1
         ) {
             return redirect()
                 ->route('admin.users.edit', $user)
                 ->withInput()
                 ->with('error', 'Admin terakhir tidak dapat diubah menjadi user biasa.');
+        }
+
+        if ($limitResponse = $this->accountLimitResponse($targetRole, route('admin.users.edit', $user), $user)) {
+            return $limitResponse;
         }
 
         if (! empty($validated['password'])) {
@@ -140,5 +154,33 @@ class UserController extends AdminController
             'password' => $passwordRules,
             'password_confirmation' => ['nullable', 'string', 'min:8'],
         ]);
+    }
+
+    /**
+     * Keep account counts limited to one admin and ten class members.
+     */
+    protected function accountLimitResponse(string $role, string $redirectTo, ?User $currentUser = null): ?RedirectResponse
+    {
+        $query = User::query()->where('role', $role);
+
+        if ($currentUser) {
+            $query->whereKeyNot($currentUser->id);
+        }
+
+        $count = $query->count();
+
+        if ($role === 'admin' && $count >= self::MAX_ADMIN_ACCOUNTS) {
+            return redirect($redirectTo)
+                ->withInput()
+                ->with('error', 'Akun admin/super admin hanya boleh satu.');
+        }
+
+        if ($role === 'user' && $count >= self::MAX_STUDENT_ACCOUNTS) {
+            return redirect($redirectTo)
+                ->withInput()
+                ->with('error', 'Akun mahasiswa kelas dibatasi maksimal 10 akun.');
+        }
+
+        return null;
     }
 }

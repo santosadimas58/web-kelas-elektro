@@ -18,8 +18,8 @@
     <div>
         <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Role</label>
         <select name="role" class="form-input" required>
-            <option value="user" @selected(old('role', $user->role) === 'user')>User</option>
-            <option value="admin" @selected(old('role', $user->role) === 'admin')>Admin</option>
+            <option value="user" @selected(old('role', $user->role) === 'user')>Mahasiswa</option>
+            <option value="admin" @selected(old('role', $user->role) === 'admin')>Admin/Super Admin</option>
         </select>
         @error('role')
             <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>

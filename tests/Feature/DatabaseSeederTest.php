@@ -8,17 +8,24 @@ use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\DemoUserSeeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-test('database seeder creates demo accounts, public content, and gallery data', function () {
+test('database seeder creates admin and ten student accounts, public content, and gallery data', function () {
     $this->seed(DatabaseSeeder::class);
 
     $admin = User::query()->where('email', 'admin@example.com')->first();
-    $user = User::query()->where('email', 'user@example.com')->first();
+    $firstStudent = config('classroom.students.0');
+    $firstStudentUser = User::query()
+        ->where('email', Str::slug($firstStudent['name'], '.').'@kelas-elektro.test')
+        ->first();
 
     expect($admin)->not->toBeNull();
     expect($admin->role)->toBe('admin');
-    expect($user)->not->toBeNull();
-    expect($user->role)->toBe('user');
+    expect($firstStudentUser)->not->toBeNull();
+    expect($firstStudentUser->role)->toBe('user');
+    expect(User::query()->where('role', 'admin')->count())->toBe(1);
+    expect(User::query()->where('role', 'user')->count())->toBe(10);
+    expect(User::query()->where('email', 'user@example.com')->exists())->toBeFalse();
     expect(SiteSetting::query()->count())->toBe(1);
     expect(Student::query()->count())->toBeGreaterThanOrEqual(15);
     expect(GalleryItem::query()->count())->toBeGreaterThanOrEqual(6);
@@ -31,6 +38,7 @@ test('production seeding creates configured admin without demo user', function (
         'classroom.admin.name' => 'Admin Production',
         'classroom.admin.email' => 'admin@kelas-elektro.test',
         'classroom.admin.password' => 'strong-production-password',
+        'classroom.student_default_password' => 'strong-student-password',
     ]);
 
     app(AdminUserSeeder::class)->run();
@@ -44,4 +52,5 @@ test('production seeding creates configured admin without demo user', function (
     expect(Hash::check('strong-production-password', $admin->password))->toBeTrue();
     expect(User::query()->where('email', 'admin@example.com')->exists())->toBeFalse();
     expect(User::query()->where('email', 'user@example.com')->exists())->toBeFalse();
+    expect(User::query()->where('role', 'user')->count())->toBe(10);
 });

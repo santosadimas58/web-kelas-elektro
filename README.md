@@ -102,6 +102,7 @@ APP_URL=http://localhost:8000
 ADMIN_NAME="Admin Kelas"
 # ADMIN_EMAIL=admin@example.com
 # ADMIN_PASSWORD=password
+# STUDENT_DEFAULT_PASSWORD=password
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -215,6 +216,40 @@ Hal paling penting untuk hosting non-Docker:
 - jalankan `php artisan storage:link`
 - jalankan `npm run build` sebelum upload jika hosting tidak menyediakan Node.js
 
+## Deploy Percobaan ke Vercel
+
+Project ini menyertakan konfigurasi dasar Vercel:
+
+- [vercel.json](/home/dimas/web-kelas-elektro/vercel.json)
+- [api/index.php](/home/dimas/web-kelas-elektro/api/index.php)
+- [.vercelignore](/home/dimas/web-kelas-elektro/.vercelignore)
+- [.env.vercel.example](/home/dimas/web-kelas-elektro/.env.vercel.example)
+
+Vercel tidak menyediakan runtime PHP resmi. Konfigurasi ini memakai community runtime `vercel-php@0.7.4`, jadi cocok untuk percobaan/preview, bukan rekomendasi utama untuk production Laravel yang butuh upload file lokal dan proses backend jangka panjang.
+
+Langkah awal:
+
+1. Push commit terbaru ke GitHub.
+2. Import repository dari dashboard Vercel.
+3. Pastikan root directory tetap root repository.
+4. Gunakan build command `npm run build` jika tidak otomatis terbaca dari `vercel.json`.
+5. Salin nilai dari [.env.vercel.example](/home/dimas/web-kelas-elektro/.env.vercel.example) ke Environment Variables Vercel.
+6. Isi `APP_KEY` dengan hasil `php artisan key:generate --show`.
+7. Gunakan database eksternal MySQL/PostgreSQL yang bisa diakses dari Vercel.
+8. Setelah deploy pertama, jalankan migration dari lokal ke database production:
+
+```bash
+php artisan migrate --force --seed
+```
+
+Catatan penting untuk Vercel:
+
+- set `LOG_CHANNEL=stderr`
+- set `SESSION_DRIVER=database`
+- set `CACHE_STORE=database`
+- set `LARAVEL_STORAGE_PATH=/tmp/storage`
+- upload foto ke disk lokal tidak permanen di Vercel; gunakan object storage seperti S3/R2/Supabase Storage jika fitur upload harus dipakai serius
+
 ## Migration dan Seeding
 
 Menjalankan migration:
@@ -255,10 +290,12 @@ php artisan db:seed --class=GallerySeeder
 Seeder default akan menyiapkan:
 
 - 1 admin
-- 1 user demo hanya untuk environment non-production
+- 10 akun mahasiswa dari daftar kelas di `config/classroom.php`
 - pengaturan website
 - minimal 15 data mahasiswa demo
 - beberapa item galeri demo
+
+Public registration ditutup. Akun baru hanya bisa dibuat oleh admin melalui menu admin `Kelola Akun`.
 
 ## Akun Development
 
@@ -267,20 +304,20 @@ Untuk local development, jika `ADMIN_EMAIL` dan `ADMIN_PASSWORD` tidak diatur, s
 - Email: `admin@example.com`
 - Password: `password`
 
-Seeder juga membuat user demo hanya saat environment bukan `production`:
+Seeder juga membuat 10 akun mahasiswa dengan email dari daftar kelas. Untuk local development, password default mahasiswa adalah:
 
-- Email: `user@example.com`
 - Password: `password`
 
-Untuk production, isi admin asli di `.env` server:
+Untuk production, isi admin asli dan password awal mahasiswa di `.env` server:
 
 ```env
 ADMIN_NAME="Admin Kelas"
 ADMIN_EMAIL="admin@domain-anda.com"
 ADMIN_PASSWORD="gunakan-password-kuat"
+STUDENT_DEFAULT_PASSWORD="gunakan-password-awal-mahasiswa"
 ```
 
-Pada environment `production`, user demo `user@example.com` tidak dibuat otomatis.
+Pada environment `production`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, dan `STUDENT_DEFAULT_PASSWORD` wajib diisi sebelum seeding.
 
 ## Testing
 
@@ -325,7 +362,7 @@ php artisan test tests/Feature/SecurityAndUploadAuditTest.php
 - pastikan `storage` dan `bootstrap/cache` writable
 - jalankan `npm run build`
 - set `ADMIN_EMAIL` dan `ADMIN_PASSWORD` untuk akun admin production
-- pastikan akun demo default tidak aktif di website production
+- set `STUDENT_DEFAULT_PASSWORD` untuk akun awal mahasiswa
 
 ## Catatan
 

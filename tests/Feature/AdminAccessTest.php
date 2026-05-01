@@ -190,3 +190,43 @@ test('deleted users are logged out on their next request and their uploaded asse
     $response->assertSessionHas('status');
     $this->assertGuest();
 });
+
+test('admin cannot create a second admin account', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.users.store'), [
+            'name' => 'Admin Kedua',
+            'email' => 'admin2@example.com',
+            'role' => 'admin',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])
+        ->assertRedirect(route('admin.users.create'));
+
+    expect(User::query()->where('role', 'admin')->count())->toBe(1);
+});
+
+test('admin cannot create more than ten student accounts', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    User::factory()->count(10)->create([
+        'role' => 'user',
+    ]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.users.store'), [
+            'name' => 'Mahasiswa Tambahan',
+            'email' => 'mahasiswa11@example.com',
+            'role' => 'user',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])
+        ->assertRedirect(route('admin.users.create'));
+
+    expect(User::query()->where('role', 'user')->count())->toBe(10);
+});
