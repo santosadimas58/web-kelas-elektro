@@ -34,6 +34,18 @@ test('database seeder creates admin and ten student accounts, public content, an
 test('production seeding creates configured admin without demo user', function () {
     app()->detectEnvironment(fn () => 'production');
 
+    User::factory()->create([
+        'name' => 'Old Admin',
+        'email' => 'old-admin@kelas-elektro.test',
+        'role' => 'admin',
+    ]);
+
+    User::factory()->create([
+        'name' => 'Old User',
+        'email' => 'old-user@kelas-elektro.test',
+        'role' => 'user',
+    ]);
+
     config([
         'classroom.admin.name' => 'Admin Production',
         'classroom.admin.email' => 'admin@kelas-elektro.test',
@@ -52,5 +64,8 @@ test('production seeding creates configured admin without demo user', function (
     expect(Hash::check('strong-production-password', $admin->password))->toBeTrue();
     expect(User::query()->where('email', 'admin@example.com')->exists())->toBeFalse();
     expect(User::query()->where('email', 'user@example.com')->exists())->toBeFalse();
+    expect(User::query()->where('email', 'old-admin@kelas-elektro.test')->exists())->toBeFalse();
+    expect(User::query()->where('email', 'old-user@kelas-elektro.test')->exists())->toBeFalse();
+    expect(User::query()->where('role', 'admin')->count())->toBe(1);
     expect(User::query()->where('role', 'user')->count())->toBe(10);
 });

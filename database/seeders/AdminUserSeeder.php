@@ -23,6 +23,13 @@ class AdminUserSeeder extends Seeder
             throw new RuntimeException('Set ADMIN_EMAIL and ADMIN_PASSWORD before seeding the production admin account.');
         }
 
+        User::query()
+            ->where('role', 'admin')
+            ->where('email', '!=', $email)
+            ->get()
+            ->each
+            ->delete();
+
         User::query()->updateOrCreate(
             ['email' => $email],
             [

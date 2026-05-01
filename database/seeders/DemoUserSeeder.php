@@ -22,11 +22,22 @@ class DemoUserSeeder extends Seeder
             throw new RuntimeException('Set STUDENT_DEFAULT_PASSWORD before seeding production student accounts.');
         }
 
-        User::query()->where('email', 'user@example.com')->delete();
+        $students = collect(array_slice(config('classroom.students'), 0, 10))
+            ->map(fn (array $student): array => [
+                'email' => Str::slug($student['name'], '.').'@kelas-elektro.test',
+                'name' => $student['name'],
+            ]);
 
-        foreach (array_slice(config('classroom.students'), 0, 10) as $student) {
+        User::query()
+            ->where('role', 'user')
+            ->whereNotIn('email', $students->pluck('email')->all())
+            ->get()
+            ->each
+            ->delete();
+
+        foreach ($students as $student) {
             User::query()->updateOrCreate(
-                ['email' => Str::slug($student['name'], '.').'@kelas-elektro.test'],
+                ['email' => $student['email']],
                 [
                     'name' => $student['name'],
                     'role' => 'user',
