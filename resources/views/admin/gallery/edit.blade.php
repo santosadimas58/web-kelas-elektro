@@ -9,7 +9,7 @@
     <div class="admin-shell">
         @include('admin.partials.flash')
 
-        <form method="POST" action="{{ route('admin.gallery.update', $item) }}" class="admin-panel space-y-6">
+        <form method="POST" action="{{ route('admin.gallery.update', $item) }}" enctype="multipart/form-data" class="admin-panel space-y-6">
             @csrf
             @method('PUT')
             @include('admin.gallery._form')

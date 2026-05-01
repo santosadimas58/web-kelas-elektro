@@ -9,7 +9,7 @@
     <div class="admin-shell">
         @include('admin.partials.flash')
 
-        <form method="POST" action="{{ route('admin.gallery.store') }}" class="admin-panel space-y-6">
+        <form method="POST" action="{{ route('admin.gallery.store') }}" enctype="multipart/form-data" class="admin-panel space-y-6">
             @csrf
             @include('admin.gallery._form')
             <div class="flex justify-end gap-3">

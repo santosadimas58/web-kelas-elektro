@@ -29,7 +29,7 @@
                                 <p class="font-semibold text-slate-950 dark:text-slate-100">{{ $item->title }}</p>
                                 <p class="mt-1 max-w-xl text-sm">{{ $item->description }}</p>
                             </td>
-                            <td>{{ $item->image_url ? 'Ada URL' : 'Placeholder' }}</td>
+                            <td>{{ $item->display_image_url ? 'Ada gambar' : 'Placeholder' }}</td>
                             <td>{{ $item->sort_order }}</td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">

@@ -37,7 +37,7 @@ class GalleryItemController extends AdminController
      */
     public function store(Request $request): RedirectResponse
     {
-        GalleryItem::query()->create($this->prepareItemPayload($this->validateItem($request)));
+        GalleryItem::query()->create($this->prepareItemPayload($request, $this->validateItem($request)));
 
         return redirect()
             ->route('admin.gallery.index')
@@ -60,7 +60,7 @@ class GalleryItemController extends AdminController
      */
     public function update(Request $request, GalleryItem $gallery): RedirectResponse
     {
-        $gallery->update($this->prepareItemPayload($this->validateItem($request), $gallery));
+        $gallery->update($this->prepareItemPayload($request, $this->validateItem($request), $gallery));
 
         return redirect()
             ->route('admin.gallery.index')
@@ -93,6 +93,7 @@ class GalleryItemController extends AdminController
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:1000'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'image_url' => ['nullable', 'url', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
         ]);
@@ -104,8 +105,21 @@ class GalleryItemController extends AdminController
      * @param  array<string, mixed>  $validated
      * @return array<string, mixed>
      */
-    protected function prepareItemPayload(array $validated, ?GalleryItem $gallery = null): array
+    protected function prepareItemPayload(Request $request, array $validated, ?GalleryItem $gallery = null): array
     {
+        unset($validated['image']);
+
+        if ($request->hasFile('image')) {
+            if ($gallery?->image_path) {
+                Storage::disk('public')->delete($gallery->image_path);
+            }
+
+            $validated['image_path'] = $request->file('image')->store('gallery-images', 'public');
+            $validated['image_url'] = null;
+
+            return $validated;
+        }
+
         if (! empty($validated['image_url'])) {
             if ($gallery?->image_path) {
                 Storage::disk('public')->delete($gallery->image_path);

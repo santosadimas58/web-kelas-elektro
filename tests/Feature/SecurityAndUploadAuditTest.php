@@ -160,3 +160,60 @@ test('admin gallery update removes stale uploaded files when switching to an ext
     expect($gallery->display_image_url)->toBe('https://example.com/gallery.jpg');
     Storage::disk('public')->assertMissing($imagePath);
 });
+
+test('admin can create gallery item with uploaded image', function () {
+    Storage::fake('public');
+
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $response = $this->actingAs($admin)->post(route('admin.gallery.store'), [
+        'title' => 'Galeri Upload Admin',
+        'description' => 'Foto diunggah langsung dari device admin.',
+        'sort_order' => 7,
+        'image' => fakeAuditImage('admin-gallery.png'),
+    ]);
+
+    $response->assertRedirect(route('admin.gallery.index', absolute: false));
+
+    $gallery = GalleryItem::query()->where('title', 'Galeri Upload Admin')->firstOrFail();
+
+    expect($gallery->image_url)->toBeNull();
+    expect($gallery->image_path)->toStartWith('gallery-images/');
+    Storage::disk('public')->assertExists($gallery->image_path);
+});
+
+test('admin gallery update replaces uploaded image and removes stale file', function () {
+    Storage::fake('public');
+
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $oldPath = fakeAuditImage('old-gallery.png')->store('gallery-images', 'public');
+
+    $gallery = GalleryItem::query()->create([
+        'title' => 'Galeri Lama',
+        'description' => 'Deskripsi lama',
+        'image_path' => $oldPath,
+        'sort_order' => 1,
+    ]);
+
+    $response = $this->actingAs($admin)->put(route('admin.gallery.update', $gallery), [
+        'title' => 'Galeri Baru',
+        'description' => 'Deskripsi baru',
+        'sort_order' => 3,
+        'image_url' => 'https://example.com/ignored.jpg',
+        'image' => fakeAuditImage('new-gallery.png'),
+    ]);
+
+    $response->assertRedirect(route('admin.gallery.index', absolute: false));
+
+    $gallery->refresh();
+
+    expect($gallery->image_url)->toBeNull();
+    expect($gallery->image_path)->toStartWith('gallery-images/');
+    Storage::disk('public')->assertMissing($oldPath);
+    Storage::disk('public')->assertExists($gallery->image_path);
+});

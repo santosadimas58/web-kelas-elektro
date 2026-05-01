@@ -24,8 +24,24 @@
     </div>
 
     <div class="lg:col-span-2">
+        @if ($item->display_image_url)
+            <div class="mb-4 overflow-hidden rounded-lg border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950">
+                <img src="{{ $item->display_image_url }}" alt="{{ $item->title }}" class="h-56 w-full object-cover">
+            </div>
+        @endif
+
+        <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Upload Gambar</label>
+        <input name="image" type="file" accept="image/jpeg,image/png,image/webp" class="form-input">
+        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Gunakan JPG, PNG, atau WEBP. Maksimal 2MB.</p>
+        @error('image')
+            <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+        @enderror
+    </div>
+
+    <div class="lg:col-span-2">
         <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">URL Gambar</label>
         <input name="image_url" type="url" value="{{ old('image_url', $item->image_url) }}" class="form-input" placeholder="https://...">
+        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Opsional. Jika upload gambar dipilih, URL ini akan dikosongkan.</p>
         @error('image_url')
             <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
         @enderror
