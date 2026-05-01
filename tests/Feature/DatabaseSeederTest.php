@@ -49,7 +49,7 @@ test('production seeding creates configured admin without demo user', function (
     config([
         'classroom.admin.name' => 'Admin Production',
         'classroom.admin.email' => 'admin@kelas-elektro.test',
-        'classroom.admin.password' => 'strong-production-password',
+        'classroom.admin.password' => 'Admin-Prod-2026!Safe',
         'classroom.student_default_password' => 'strong-student-password',
     ]);
 
@@ -61,11 +61,24 @@ test('production seeding creates configured admin without demo user', function (
     expect($admin)->not->toBeNull();
     expect($admin->name)->toBe('Admin Production');
     expect($admin->role)->toBe('admin');
-    expect(Hash::check('strong-production-password', $admin->password))->toBeTrue();
+    expect(Hash::check('Admin-Prod-2026!Safe', $admin->password))->toBeTrue();
     expect(User::query()->where('email', 'admin@example.com')->exists())->toBeFalse();
     expect(User::query()->where('email', 'user@example.com')->exists())->toBeFalse();
     expect(User::query()->where('email', 'old-admin@kelas-elektro.test')->exists())->toBeFalse();
     expect(User::query()->where('email', 'old-user@kelas-elektro.test')->exists())->toBeFalse();
     expect(User::query()->where('role', 'admin')->count())->toBe(1);
     expect(User::query()->where('role', 'user')->count())->toBe(10);
+});
+
+test('production admin seeding rejects weak admin password', function () {
+    app()->detectEnvironment(fn () => 'production');
+
+    config([
+        'classroom.admin.name' => 'Admin Production',
+        'classroom.admin.email' => 'admin@kelas-elektro.test',
+        'classroom.admin.password' => 'password',
+    ]);
+
+    expect(fn () => app(AdminUserSeeder::class)->run())
+        ->toThrow(RuntimeException::class, 'ADMIN_PASSWORD for production must be at least 16 characters');
 });

@@ -25,7 +25,7 @@ DB_USERNAME=user_database_hosting
 DB_PASSWORD=password_database_hosting
 ADMIN_NAME="Admin Kelas"
 ADMIN_EMAIL="admin@domain-anda.com"
-ADMIN_PASSWORD="gunakan-password-kuat"
+ADMIN_PASSWORD="gunakan-password-admin-yang-panjang-dan-acak"
 MAIL_FROM_ADDRESS="noreply@domain-anda.com"
 RESEND_API_KEY=
 ```
@@ -96,7 +96,7 @@ Jalankan seeder hanya jika memang ingin data awal:
 php artisan db:seed --force
 ```
 
-Pada `APP_ENV=production`, seeder akan membuat admin dari `ADMIN_NAME`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD`. User demo `user@example.com` tidak dibuat otomatis.
+Pada `APP_ENV=production`, seeder akan membuat admin dari `ADMIN_NAME`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD`. `ADMIN_PASSWORD` minimal 16 karakter dan harus berisi huruf besar, huruf kecil, angka, dan simbol. User demo `user@example.com` tidak dibuat otomatis.
 
 Jika hanya ingin membuat admin dan pengaturan awal tanpa data demo mahasiswa/galeri, jalankan:
 

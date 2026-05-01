@@ -313,11 +313,17 @@ Untuk production, isi admin asli dan password awal mahasiswa di `.env` server:
 ```env
 ADMIN_NAME="Admin Kelas"
 ADMIN_EMAIL="admin@domain-anda.com"
-ADMIN_PASSWORD="gunakan-password-kuat"
+ADMIN_PASSWORD="gunakan-password-admin-yang-panjang-dan-acak"
 STUDENT_DEFAULT_PASSWORD="gunakan-password-awal-mahasiswa"
 ```
 
-Pada environment `production`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, dan `STUDENT_DEFAULT_PASSWORD` wajib diisi sebelum seeding.
+Pada environment `production`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, dan `STUDENT_DEFAULT_PASSWORD` wajib diisi sebelum seeding. `ADMIN_PASSWORD` minimal 16 karakter dan harus berisi huruf besar, huruf kecil, angka, dan simbol.
+
+Contoh membuat password admin acak:
+
+```bash
+openssl rand -base64 24
+```
 
 ## Testing
 
