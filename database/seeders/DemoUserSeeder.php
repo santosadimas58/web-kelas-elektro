@@ -36,14 +36,11 @@ class DemoUserSeeder extends Seeder
             ->delete();
 
         foreach ($students as $student) {
-            User::query()->updateOrCreate(
-                ['email' => $student['email']],
-                [
-                    'name' => $student['name'],
-                    'role' => 'user',
-                    'password' => Hash::make($password),
-                ]
-            );
+            $user = User::query()->firstOrNew(['email' => $student['email']]);
+            $user->name = $student['name'];
+            $user->role = 'user';
+            $user->password = Hash::make($password);
+            $user->save();
         }
     }
 }

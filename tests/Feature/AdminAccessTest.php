@@ -201,8 +201,8 @@ test('admin cannot create a second admin account', function () {
             'name' => 'Admin Kedua',
             'email' => 'admin2@example.com',
             'role' => 'admin',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'StrongPass123',
+            'password_confirmation' => 'StrongPass123',
         ])
         ->assertRedirect(route('admin.users.create'));
 
@@ -223,8 +223,8 @@ test('admin cannot create more than ten student accounts', function () {
             'name' => 'Mahasiswa Tambahan',
             'email' => 'mahasiswa11@example.com',
             'role' => 'user',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'StrongPass123',
+            'password_confirmation' => 'StrongPass123',
         ])
         ->assertRedirect(route('admin.users.create'));
 

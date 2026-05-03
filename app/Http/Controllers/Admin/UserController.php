@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class UserController extends AdminController
@@ -48,9 +49,12 @@ class UserController extends AdminController
             return $limitResponse;
         }
 
-        $validated['password'] = Hash::make($validated['password']);
-
-        User::query()->create($validated);
+        $user = new User;
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->role = $validated['role'];
+        $user->password = Hash::make($validated['password']);
+        $user->save();
 
         return redirect()
             ->route('admin.users.index')
@@ -92,15 +96,15 @@ class UserController extends AdminController
             return $limitResponse;
         }
 
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->role = $targetRole;
+
         if (! empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
+            $user->password = Hash::make($validated['password']);
         }
 
-        unset($validated['password_confirmation']);
-
-        $user->update($validated);
+        $user->save();
 
         return redirect()
             ->route('admin.users.index')
@@ -139,8 +143,8 @@ class UserController extends AdminController
     protected function validateUser(Request $request, ?User $user = null): array
     {
         $passwordRules = $user
-            ? ['nullable', 'string', 'min:8', 'confirmed']
-            : ['required', 'string', 'min:8', 'confirmed'];
+            ? ['nullable', 'string', Password::min(12)->mixedCase()->numbers(), 'confirmed']
+            : ['required', 'string', Password::min(12)->mixedCase()->numbers(), 'confirmed'];
 
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],

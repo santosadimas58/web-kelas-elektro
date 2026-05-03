@@ -34,14 +34,11 @@ class AdminUserSeeder extends Seeder
             ->each
             ->delete();
 
-        User::query()->updateOrCreate(
-            ['email' => $email],
-            [
-                'name' => $name,
-                'role' => 'admin',
-                'password' => Hash::make($password),
-            ]
-        );
+        $admin = User::query()->firstOrNew(['email' => $email]);
+        $admin->name = $name;
+        $admin->role = 'admin';
+        $admin->password = Hash::make($password);
+        $admin->save();
     }
 
     /**

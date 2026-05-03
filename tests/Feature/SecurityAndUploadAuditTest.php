@@ -27,6 +27,20 @@ test('application debug config is sourced from env with a false default', functi
     expect($configFile)->toContain("'debug' => (bool) env('APP_DEBUG', false)");
 });
 
+test('responses include baseline security headers', function () {
+    $response = $this->get('/');
+
+    $response
+        ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+        ->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+
+    expect($response->headers->get('Content-Security-Policy'))
+        ->toContain("default-src 'self'")
+        ->toContain("frame-ancestors 'self'");
+});
+
 test('user gallery upload rejects non-image files', function () {
     Storage::fake('public');
 
@@ -182,6 +196,24 @@ test('admin can create gallery item with uploaded image', function () {
     expect($gallery->image_url)->toBeNull();
     expect($gallery->image_path)->toStartWith('gallery-images/');
     Storage::disk('public')->assertExists($gallery->image_path);
+});
+
+test('admin gallery image url must use https', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $response = $this->actingAs($admin)->post(route('admin.gallery.store'), [
+        'title' => 'Galeri HTTP',
+        'description' => 'URL gambar tidak boleh memakai HTTP.',
+        'sort_order' => 1,
+        'image_url' => 'http://example.com/gallery.jpg',
+    ]);
+
+    $response->assertSessionHasErrors('image_url');
+    $this->assertDatabaseMissing('gallery_items', [
+        'title' => 'Galeri HTTP',
+    ]);
 });
 
 test('admin gallery update replaces uploaded image and removes stale file', function () {

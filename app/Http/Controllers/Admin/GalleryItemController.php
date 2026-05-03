@@ -94,7 +94,7 @@ class GalleryItemController extends AdminController
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:1000'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'image_url' => ['nullable', 'url', 'max:2048'],
+            'image_url' => ['nullable', 'url', 'starts_with:https://', 'max:2048'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
         ]);
     }
@@ -121,6 +121,7 @@ class GalleryItemController extends AdminController
         }
 
         if (! empty($validated['image_url'])) {
+            // TODO: Add an allowlist if gallery images should be limited to trusted domains.
             if ($gallery?->image_path) {
                 Storage::disk('public')->delete($gallery->image_path);
             }
