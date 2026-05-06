@@ -35,7 +35,7 @@ test('public students page displays paginated student cards from the database', 
     $response = $this->get(route('students'));
 
     $response->assertOk();
-    expect($response->viewData('students')->total())->toBe(12);
+    expect($response->viewData('students')->total())->toBe(16);
     expect($response->viewData('students')->count())->toBe(9);
     $response->assertDontSee('Admin Kelas');
 });

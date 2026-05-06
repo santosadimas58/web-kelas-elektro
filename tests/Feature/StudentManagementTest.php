@@ -26,11 +26,11 @@ test('student management index is paginated for admins', function () {
     $response = $this->actingAs($admin)->get(route('admin.students.index'));
 
     $response->assertOk();
-    expect($response->viewData('students')->total())->toBe(12);
+    expect($response->viewData('students')->total())->toBe(16);
     expect($response->viewData('students')->count())->toBe(10);
 });
 
-test('student management index is synchronized with registered accounts', function () {
+test('student management index includes registered and manually managed students', function () {
     $admin = User::factory()->create([
         'name' => 'Admin Kelas',
         'email' => 'admin@example.com',
@@ -51,10 +51,60 @@ test('student management index is synchronized with registered accounts', functi
     $response = $this->actingAs($admin)->get(route('admin.students.index'));
 
     $response->assertOk();
-    expect($response->viewData('students')->total())->toBe(2);
+    expect($response->viewData('students')->total())->toBe(8);
     expect($response->viewData('students')->pluck('name')->all())->not->toContain('Admin Kelas');
     $response->assertSee('Dim San');
     $response->assertSee('Supzero');
+});
+
+test('admin can see a manually created student after redirecting to the index', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $response = $this->actingAs($admin)->post(route('admin.students.store'), [
+        'name' => 'Dina Lestari',
+        'nim' => 'PTE2024001',
+        'prodi' => 'Pendidikan Teknik Elektro',
+        'angkatan' => 2024,
+        'email' => 'dina@example.com',
+        'sort_order' => 1,
+    ]);
+
+    $response->assertRedirect(route('admin.students.index'));
+
+    $this->actingAs($admin)
+        ->get(route('admin.students.index'))
+        ->assertOk()
+        ->assertSee('Dina Lestari')
+        ->assertSee('PTE2024001');
+});
+
+test('student account synchronization does not overwrite managed profile fields', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+    $user = User::factory()->create([
+        'name' => 'Nama Akun',
+        'email' => 'akun@example.com',
+        'role' => 'user',
+    ]);
+    $student = Student::factory()->create([
+        'name' => 'Nama Profil',
+        'nim' => sprintf('USER%06d', $user->id),
+        'prodi' => 'Pendidikan Teknik Elektro',
+        'angkatan' => 2024,
+        'email' => 'akun@example.com',
+        'sort_order' => 7,
+    ]);
+
+    $this->actingAs($admin)->get(route('admin.students.index'))->assertOk();
+
+    $student->refresh();
+    expect($student->name)->toBe('Nama Profil');
+    expect($student->prodi)->toBe('Pendidikan Teknik Elektro');
+    expect($student->angkatan)->toBe(2024);
+    expect($student->sort_order)->toBe(7);
 });
 
 test('regular users cannot access student management', function () {

@@ -15,6 +15,7 @@ class StudentAccountSynchronizer
     public static function sync(): void
     {
         User::query()
+            ->where('role', 'user')
             ->orderBy('id')
             ->get(['id', 'name', 'email', 'role'])
             ->each(function (User $user): void {
@@ -23,12 +24,16 @@ class StudentAccountSynchronizer
                     ->orWhere('nim', self::studentNim($user))
                     ->firstOrNew();
 
+                if ($student->exists) {
+                    return;
+                }
+
                 $student->fill(self::studentData($user))->save();
             });
     }
 
     /**
-     * Build a student query limited to registered accounts.
+     * Build a student query for class profiles, including manually managed rows.
      *
      * @return Builder<Student>
      */
@@ -36,12 +41,12 @@ class StudentAccountSynchronizer
     {
         self::sync();
 
-        $registeredEmails = User::query()
-            ->where('role', 'user')
+        $adminEmails = User::query()
+            ->where('role', 'admin')
             ->pluck('email');
 
         return Student::query()
-            ->whereIn('email', $registeredEmails)
+            ->whereNotIn('email', $adminEmails)
             ->orderBy('sort_order')
             ->orderBy('name');
     }
@@ -56,10 +61,10 @@ class StudentAccountSynchronizer
         return [
             'name' => $user->name,
             'nim' => self::studentNim($user),
-            'prodi' => $user->role === 'admin' ? 'Admin' : 'Mahasiswa Kelas',
+            'prodi' => 'Mahasiswa Kelas',
             'angkatan' => $year,
             'email' => $user->email,
-            'study_focus' => $user->role === 'admin' ? 'Admin' : 'Mahasiswa Kelas',
+            'study_focus' => 'Mahasiswa Kelas',
             'bio' => sprintf(
                 '%s terdaftar sebagai akun %s. Kontak: %s.',
                 $user->name,
